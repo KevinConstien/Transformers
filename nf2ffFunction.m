@@ -206,7 +206,7 @@ fileID = fopen(filename,'r');
             nbr_samples = sqrt(nbr_row); %samples along x and y
             %arrange in a 3D matrix
             for i=1:nbr_col
-                data(:,:,i) = transp(reshape(SData(:,i),nbr_samples,nbr_samples));
+                data(:,:,i) = transpose(reshape(SData(:,i),nbr_samples,nbr_samples));
             end
         end
         if currentPol == 'X'
@@ -216,7 +216,7 @@ fileID = fopen(filename,'r');
             nbr_samples = sqrt(nbr_row); %samples along x and y
             %arrange in a 3D matrix
             for i=5:6
-                data(:,:,i) = transp(reshape(Xpolpart(:,i-4),nbr_samples,nbr_samples));
+                data(:,:,i) = transpose(reshape(Xpolpart(:,i-4),nbr_samples,nbr_samples));
             end
        end
     end
