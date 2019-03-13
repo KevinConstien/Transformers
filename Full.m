@@ -39,10 +39,10 @@ FFparams.freq = freq;
 FFparams.nbr_samples = 361;
 FFparams.H_angle_range = 120;
 FFparams.V_angle_range = 120;
-% [FF] = nf2ffFunction(FFparams,co,cross);
+[FF] = nf2ffFunction(FFparams,co,cross);
 % 
 % %Plotting
-% FF.coordinate = 'L3';
+FF.coordinate = 'L3';
 % kplot(FF);
 
 
