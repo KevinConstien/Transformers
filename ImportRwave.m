@@ -113,7 +113,7 @@ data.S22DB = cell2mat(raw(:, 8));
 data.S22DEG = cell2mat(raw(:, 9));
 data.x = cell2mat(raw(:, 10));
 data.y = cell2mat(raw(:, 11));
-data.z = cell2mat(raw(:, 12));
+data.r = cell2mat(raw(:, 12));
 
 save('data.mat','data');
 end

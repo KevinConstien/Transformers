@@ -110,9 +110,6 @@ plot(AZ(row,:),coNorm(row,:),'LineWidth',lw); hold on;
 plot(AZ(row,:),cxNorm(row,:),'-','LineWidth',lw);
 title("Radiation Pattern Co Horizonatal Plane (\phi = 0^{\circ}) " + string(FF.coordinate));
 % xlim([min(min(AZ(row,:))),max(max(AZ(row,:)))]);
-ylim([-50 0]);
-xlim([-40 40]);
-
 setup2D();
 xlabel('Azimuth (deg)');
 
@@ -123,10 +120,8 @@ plot(EL(:,col),coNorm(:,col),'LineWidth',lw);hold on;
 plot(EL(:,col),cxNorm(:,col),'-','LineWidth',lw);
 title("Radiation Pattern Co Vertical Plane (\phi = 90^{\circ}) " + string(FF.coordinate));
 % xlim([min(EL(:,col)),max(EL(:,col))]);
-ylim([-50 0]);
-xlim([-40 40]);
-
 setup2D();
+
 xlabel('Elevation (deg)');
 if isfield(FF,'title')
     mytitle = FF.title + " "+FF.coordinate;
@@ -135,7 +130,7 @@ if isfield(FF,'title')
     
 end
 
-set(gcf, 'Units', 'Normalized', 'OuterPosition', [0,0,1,.96]);%[0, 0.04, 1, 0.96]);
+% set(gcf, 'Units', 'Normalized', 'OuterPosition', [0,0,1,.96]);%[0, 0.04, 1, 0.96]);
 
 % %Polar Plot... wouldnt recommend using this.
 % figure();
@@ -162,7 +157,9 @@ set(gcf, 'Units', 'Normalized', 'OuterPosition', [0,0,1,.96]);%[0, 0.04, 1, 0.96
         legend('Co','Cross','Location','Southeast')
         ylabel('Magnitude(dB)');
         grid minor;
-        axis normal;        
+        axis normal;
+        ylim([-35 0]);
+        xlim([-40 40]);
     end
 
 
