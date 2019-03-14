@@ -117,7 +117,7 @@ data.x = cell2mat(raw(:, 10));
 data.y = cell2mat(raw(:, 11));
 data.r = cell2mat(raw(:, 12));
 
-save('data.mat','data');
+% save('data.mat','data');
 end
 
 %% Clear temporary variables

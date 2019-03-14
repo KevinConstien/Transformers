@@ -16,7 +16,7 @@ for i = 1:20:length(unique(coTable.FreqHz))
     S12 = coTable.S12DB(rows);
     S21 = coTable.S21DB(rows);   
 
-    figure()
+    figure();
     plot(r - r(end)/2,S12,'-o');hold on;
     plot(r - r(end)/2,S21,'-o');
 

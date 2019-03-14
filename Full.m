@@ -4,13 +4,8 @@ clear all
 
 
 %Importing H data
-% filename = '2019-03-08_00_40_29test2NF.csv';
-filename = '2019-03-13_22_45_13testFFArrayIF3kAver25.csv';
+filename = '2019-03-13_20_30_25testNFAver25IF3kFoamOn.csv';
 coTable = ImportRwave(filename);
-
-save('coTable.mat','coTable');
-
-% load 'coTable.mat';
 
 %Importing V data
 % filename = '2019-03-08_00_40_29test2NF.csv';

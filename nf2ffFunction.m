@@ -101,24 +101,27 @@ end
 
 %PROBE CORRECTION ---------------
 %get probe spectrum (or pattern, I am not sure yet what NSI gives you)
-[E_L2I_AZ_ProbeEx,E_L2I_EL_ProbeEx,E_L2I_AZ_ProbeEy,E_L2I_EL_ProbeEy]...
-    = getProbePatterns(TH,PH,0);
+
 % [E_L2I_AZ_ProbeEx,E_L2I_EL_ProbeEx,E_L2I_AZ_ProbeEy,E_L2I_EL_ProbeEy]...
-%     = getWR187Patterns(TH,PH,1);
+%     = getProbePatterns(TH,PH,0);
+
+% % [E_L2I_AZ_ProbeEx,E_L2I_EL_ProbeEx,E_L2I_AZ_ProbeEy,E_L2I_EL_ProbeEy]...
+% %     = getWR187Patterns(TH,PH,1);
 
 %I rather define the patterns in H,V or X,Y or AZ,EL rather than Co and X
-Fx_probeEx = E_L2I_AZ_ProbeEx;
-Fy_probeEx = E_L2I_EL_ProbeEx;
-Fx_probeEy = E_L2I_AZ_ProbeEy;
-Fy_probeEy = E_L2I_EL_ProbeEy;
-%Correction - from slater
-denominator = Fx_probeEx.*Fy_probeEy - Fx_probeEy.*Fy_probeEx;
-F_AZ_corr = (F_AZ.*Fy_probeEy - F_EL.*Fy_probeEx)./denominator;
-F_EL_corr = (-F_AZ.*Fx_probeEy + F_EL.*Fx_probeEx)./denominator;
 
-%Spectrum to FF fields (Cos not needed);
-EL2IAZ = F_AZ_corr;%.*cosd(TH);
-EL2IEL = F_EL_corr;%.*cosd(TH);
+% Fx_probeEx = E_L2I_AZ_ProbeEx;
+% Fy_probeEx = E_L2I_EL_ProbeEx;
+% Fx_probeEy = E_L2I_AZ_ProbeEy;
+% Fy_probeEy = E_L2I_EL_ProbeEy;
+% %Correction - from slater
+% denominator = Fx_probeEx.*Fy_probeEy - Fx_probeEy.*Fy_probeEx;
+% F_AZ_corr = (F_AZ.*Fy_probeEy - F_EL.*Fy_probeEx)./denominator;
+% F_EL_corr = (-F_AZ.*Fx_probeEy + F_EL.*Fx_probeEx)./denominator;
+% 
+% %Spectrum to FF fields (Cos not needed);
+% EL2IAZ = F_AZ_corr;%.*cosd(TH);
+% EL2IEL = F_EL_corr;%.*cosd(TH);
 warning('No probe correction being used right now.');
 
 EL2IAZ = Fco_Interp;
