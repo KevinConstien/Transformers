@@ -16,7 +16,7 @@ for i = 1:20:length(unique(coTable.FreqHz))
     S21angle = coTable.S21DEG(rows);
 
     figure()
-    plot(S21);
+    plot(r - r(end)/2,S21);
 
     title("FF Horizontal Cut, Freq = " + freq/1e9+"GHz");
     ylabel('Magnitude (dB)');
