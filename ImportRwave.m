@@ -42,7 +42,9 @@ numCols = 12;
 first = 1;
 while ~feof(fileID) 
 %     format = ',%d %s %s  %f  %f %f %f %f %s %s';
-    formatSpec = '%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%[^\n\r]';
+    formatSpec = char("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"+...
+        "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%"+...
+        "s%s%s%s%s%s%s%s%s%s%s%s%[^\n\r]");
     header = textscan(fileID,formatSpec,headerlines,'Delimiter',',','Headerlines',0);
     flathead = [header{:}];
     if feof(fileID)
