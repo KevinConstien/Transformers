@@ -584,6 +584,7 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
 %the data to be plotted. It will make a 3d surf plot for you.
     figure();
     surf(gridx,gridy,gridco- max(max(gridco)));
+    colormap jet
     shading interp
     colorbar
     view(2)
@@ -596,6 +597,7 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
 
     figure();
     surf(gridx,gridy,gridcx- max(max(gridco)));
+    colormap jet
     shading interp
     colorbar
     view(2)
@@ -607,6 +609,7 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
     
     figure();
     surf(gridx,gridy,gridpco);
+    colormap jet
     shading interp
     colorbar
     view(2)
@@ -618,6 +621,7 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
 
     figure();
     surf(gridx,gridy,gridpcx);
+    colormap jet
     shading interp
     colorbar
     view(2)

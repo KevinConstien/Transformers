@@ -4,8 +4,14 @@ clear all
 
 
 %Importing H data
+% filename = '2019-03-19_23_43_41testFullREV.csv';
 filename = '2019-03-13_20_30_25testNFAver25IF3kFoamOn.csv';
+c1 = clock;
 coTable = ImportRwave(filename);
+c2 = clock;
+elapsed = c2-c1;
+% save('coTable.mat','coTable');
+% load('coTable.mat');
 
 %Importing V data
 % filename = '2019-03-08_00_40_29test2NF.csv';
@@ -35,7 +41,9 @@ FFparams.nbr_samples = 361;
 FFparams.H_angle_range = 120;
 FFparams.V_angle_range = 120;
 [FF] = nf2ffFunction(FFparams,co,cross);
-% 
+FF.azangle = 10;
+FF.elangle = 10;
+
 % %Plotting
 FF.coordinate = 'L3';
 kplot(FF);
