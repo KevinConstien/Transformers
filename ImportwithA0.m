@@ -17,7 +17,7 @@
  
 %% Initialize variables.
 % filename = '2019-01-22_21_59_46_00_H_UniformUniform.csv';
-function [data] = tempThing(filename)
+function [data] = ImportwithA0(filename)
 fileID = fopen(filename,'r');
 all = ((textscan(fileID,'%s%s%s%s%s%s%s%s%s%[^\n\r]','Delimiter',',')));
 fclose(fileID);
@@ -86,7 +86,13 @@ while ~feof(fileID)
     end
 end
 
-if exist('storage','var') == 0;
+if exist('dataArray','var') == 1
+    storage = cat(1,storage,dataArray);
+    clear dataArray
+end
+
+    
+if exist('storage','var') == 0
     myflatcellarray = [dataArray{:}];
 else
     myflatcellarray=[storage{:}];
