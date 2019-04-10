@@ -71,7 +71,7 @@ while ~feof(fileID)
         dataArray = cat(1,dataArray,tempArray);
     end
     clear tempArray
-    if toc(inner) > .005
+    if toc(inner) > .01
         if exist('storage','var') == 0
             storage = dataArray;
         else

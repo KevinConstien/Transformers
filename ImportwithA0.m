@@ -76,7 +76,7 @@ while ~feof(fileID)
     end
     clear tempArray
 
-    if toc > .005
+    if toc > .02
         if exist('storage','var') == 0
             storage = dataArray;
         else
