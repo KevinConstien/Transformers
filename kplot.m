@@ -22,9 +22,19 @@ function [] = kplot(FF)
 % Checking to make sure correct input.
 vars = {'AZ','EL','coL3','crossL3','coL2I','crossL2I'};
 fields = isfield(FF,vars);
-if sum(fields) < length(vars);
+if sum(fields) < length(vars)
     error('Incorrect input. See the required inputs for more info.')
 end
+
+vars = {'azangle','elangle'};
+if sum(isfield(FF,vars)) == 2   
+    elangle = FF.elangle;
+    azangle = FF.azangle;
+else
+    elangle = 0;
+    azangle = 0;
+end
+
 
 nocoordinate = "No coordinate system has been chosen. Defaulting to Ludwig 3.";
 invalidcoor = "FF.coordinate is not set to a valid coordinate system. " + ...
@@ -65,8 +75,10 @@ cxNorm = db(cross) - globalMax;
 % coNorm = db(co);
 % cxNorm = db(cross);
 
+%%%%%%%%%%%%%%%%%%%%%%%
 %Let's made some 3D plots;
-
+%3D 3D 3D
+%%%%%%%%%%%%%%%%%%%%%%%
 %Co
 figure();
 % subplot(2,2,1);
@@ -74,15 +86,15 @@ surf(AZ,EL,coNorm);
 title('Co-pol');
 setup3D();
 
-%Cross
-figure();
-% subplot(2,2,3);
-surf(AZ,EL,cxNorm);
-title('Cross-pol');
-setup3D();
-[cmin, ~] = caxis;
-caxis([cmin, 0]);
-
+% %Cross
+% figure();
+% % subplot(2,2,3);
+% surf(AZ,EL,cxNorm);
+% title('Cross-pol');
+% setup3D();
+% [cmin, ~] = caxis;
+% caxis([cmin, 0]);
+% 
 mywarning = "The cross-pol data has a higher maximum! "...
     + "The co and cross data may be switched.";
 [row,col] = find(db(co) == globalMax);
@@ -102,33 +114,34 @@ if length(row) + length(col) == 0
 end
 
 lw = 1;
-
+%%%%%%%%%%%%%%%%
+% 2D cuts
+%%%%%%%%%%%%%%%%
 %Horizontal Plane
 figure();
-% subplot(2,2,2);
+% [row,~] = (find(FF.EL == elangle)); row = unique(row);
 plot(AZ(row,:),coNorm(row,:),'LineWidth',lw); hold on;
-plot(AZ(row,:),cxNorm(row,:),'-','LineWidth',lw);
-title("Radiation Pattern Co Horizonatal Plane (\phi = 0^{\circ}) " + string(FF.coordinate));
-% xlim([min(min(AZ(row,:))),max(max(AZ(row,:)))]);
+% plot(AZ(row,:),cxNorm(row,:),'-','LineWidth',lw);
+title("Radiation Pattern Co Horizonatal Plane");
 setup2D();
-xlabel('Azimuth (deg)');
+
 
 %Vertical Plane
 figure();
-% subplot(2,2,4);
+% [~,col] = (find(FF.AZ == azangle)); col = unique(col);
 plot(EL(:,col),coNorm(:,col),'LineWidth',lw);hold on;
-plot(EL(:,col),cxNorm(:,col),'-','LineWidth',lw);
-title("Radiation Pattern Co Vertical Plane (\phi = 90^{\circ}) " + string(FF.coordinate));
-% xlim([min(EL(:,col)),max(EL(:,col))]);
+% plot(EL(:,col),cxNorm(:,col),'-','LineWidth',lw);
+title("Radiation Pattern Co Vertical Plane");
 setup2D();
 
-xlabel('Elevation (deg)');
-if isfield(FF,'title')
-    mytitle = FF.title + " "+FF.coordinate;
-    h = suptitle(mytitle);
-    set(h,'FontSize',24,'FontWeight','normal');
-    
-end
+
+% xlabel('Elevation (deg)');
+% if isfield(FF,'title')
+%     mytitle = FF.title + " "+FF.coordinate;
+%     h = suptitle(mytitle);
+%     set(h,'FontSize',24,'FontWeight','normal');
+%     
+% end
 
 % set(gcf, 'Units', 'Normalized', 'OuterPosition', [0,0,1,.96]);%[0, 0.04, 1, 0.96]);
 
@@ -154,11 +167,11 @@ end
 % ylabel('Magnitude (dB)');
 
     function [] = setup2D()
-        legend('Co','Cross','Location','Southeast')
+%         legend('Co','Cross','Location','Southeast')
         ylabel('Magnitude(dB)');
         grid minor;
         axis normal;
-        ylim([-35 0]);
+%         ylim([-35 0]);
         xlim([-40 40]);
     end
 
