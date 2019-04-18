@@ -1,3 +1,5 @@
+%UPDATED 
+%2019 APRIL 10 - ADDED the analytical calculation of the pattern of wr10
 function [FFexport] = nf2ffFunction(FFparams,co,cross)
 
 %If x,y coordinates not in terms of meters, then convert!
@@ -16,22 +18,22 @@ cx_cmplx = db2mag(cross(:,3)).*exp(1i*cross(:,4)*pi/180);
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %Turning NF data into a 2D grid
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
+pointCol = sqrt(numel(co_cmplx));
 if isfield(FFparams,'pei') && FFparams.pei == true
-    gridx = reshape(co(:,1),[],numbersx);
-    gridy = reshape(co(:,2),[],numbersx);
+    gridx = reshape(co(:,1),[],pointCol);
+    gridy = reshape(co(:,2),[],pointCol);
     
 %     totalx = 15*28e-3;
 %     x = linspace(-totalx/2,totalx/2,16);
 %     [gridx,gridy] = meshgrid(x,x);
 
-    gridco = reshape(co(:,3),[],numbersx);
-    gridpco = reshape(co(:,4),[],numbersx);
-    gridco_cmplx = reshape(co_cmplx,[],numbersx);
+    gridco = reshape(co(:,3),[],pointCol);
+    gridpco = reshape(co(:,4),[],pointCol);
+    gridco_cmplx = reshape(co_cmplx,[],pointCol);
 
-    gridcx = reshape(cross(:,3),[],numbersx);
-    gridpcx = reshape(cross(:,4),[],numbersx);
-    gridcx_cmplx = reshape(cx_cmplx,[],numbersx);
+    gridcx = reshape(cross(:,3),[],pointCol);
+    gridpcx = reshape(cross(:,4),[],pointCol);
+    gridcx_cmplx = reshape(cx_cmplx,[],pointCol);
 else 
     gridx = reshape(co(:,1),[],numbersy).';
     gridy = reshape(co(:,2),[],numbersy).';
@@ -90,7 +92,7 @@ end
 Fco_Interp = interp2(Kx, Ky, Fco,K*U,K*V,'spline');
 Fcross_Interp = interp2(Kx, Ky, Fcross,K*U,K*V,'spline');
 
-pol = 1;
+pol = 0;
 if pol==1 %H,AZ,X pol
     F_AZ = Fco_Interp;
     F_EL = Fcross_Interp;
@@ -100,39 +102,35 @@ elseif pol==0 %V,EL or Y
 end
 
 %PROBE CORRECTION ---------------
-%get probe spectrum (or pattern, I am not sure yet what NSI gives you)
-
+[AZprobe,ELprobe,EAZprobe,EELprobe] = OEWGWR10Vpol(FFparams.freq);
+EELprobe = griddata(AZprobe,ELprobe,EELprobe,AZ,EL);
+EELprobe(isnan(EELprobe)) =1;
+% %get probe spectrum (or pattern, I am not sure yet what NSI gives you)
 % [E_L2I_AZ_ProbeEx,E_L2I_EL_ProbeEx,E_L2I_AZ_ProbeEy,E_L2I_EL_ProbeEy]...
 %     = getProbePatterns(TH,PH,0);
-
 % % [E_L2I_AZ_ProbeEx,E_L2I_EL_ProbeEx,E_L2I_AZ_ProbeEy,E_L2I_EL_ProbeEy]...
 % %     = getWR187Patterns(TH,PH,1);
-
-%I rather define the patterns in H,V or X,Y or AZ,EL rather than Co and X
-
+% 
+% %I rather define the patterns in H,V or X,Y or AZ,EL rather than Co and X
 % Fx_probeEx = E_L2I_AZ_ProbeEx;
 % Fy_probeEx = E_L2I_EL_ProbeEx;
 % Fx_probeEy = E_L2I_AZ_ProbeEy;
 % Fy_probeEy = E_L2I_EL_ProbeEy;
 % %Correction - from slater
 % denominator = Fx_probeEx.*Fy_probeEy - Fx_probeEy.*Fy_probeEx;
-% F_AZ_corr = (F_AZ.*Fy_probeEy - F_EL.*Fy_probeEx)./denominator;
-% F_EL_corr = (-F_AZ.*Fx_probeEy + F_EL.*Fx_probeEx)./denominator;
-% 
-% %Spectrum to FF fields (Cos not needed);
-% EL2IAZ = F_AZ_corr;%.*cosd(TH);
-% EL2IEL = F_EL_corr;%.*cosd(TH);
-warning('No probe correction being used right now.');
+F_AZ_corr = F_AZ;%(F_AZ.*Fy_probeEy - F_EL.*Fy_probeEx)./denominator;
+F_EL_corr = F_EL./abs(EELprobe);%(-F_AZ.*Fx_probeEy + F_EL.*Fx_probeEx)./denominator;
 
-EL2IAZ = Fco_Interp;
-EL2IEL =  Fcross_Interp;
+%Spectrum to FF fields (Cos not needed);
+EL2IAZ = F_AZ_corr;%.*cosd(TH);
+EL2IEL = F_EL_corr;%.*cosd(TH);
 
 %Tranform to other polarization definitions
 [ETH,EPH] = L2I2ThPh(TH,PH,EL2IAZ,EL2IEL);
 [EL3H,EL3V] = ThPh2L3(TH,PH,ETH,EPH);
 %  PLOT NF DATA
 
-NFplotter(gridx,gridy,gridco,gridcx);
+% NFplotter(gridx,gridy,gridco,gridcx);
 % PLOT COMPUTED PATTERNS
 
 if pol == 0 %Vertical pol
@@ -209,7 +207,7 @@ fileID = fopen(filename,'r');
             nbr_samples = sqrt(nbr_row); %samples along x and y
             %arrange in a 3D matrix
             for i=1:nbr_col
-                data(:,:,i) = transpose(reshape(SData(:,i),nbr_samples,nbr_samples));
+                data(:,:,i) = transp(reshape(SData(:,i),nbr_samples,nbr_samples));
             end
         end
         if currentPol == 'X'
@@ -219,7 +217,7 @@ fileID = fopen(filename,'r');
             nbr_samples = sqrt(nbr_row); %samples along x and y
             %arrange in a 3D matrix
             for i=5:6
-                data(:,:,i) = transpose(reshape(Xpolpart(:,i-4),nbr_samples,nbr_samples));
+                data(:,:,i) = transp(reshape(Xpolpart(:,i-4),nbr_samples,nbr_samples));
             end
        end
     end
@@ -241,7 +239,7 @@ function [E_L2I_AZ_ProbeEx,E_L2I_EL_ProbeEx,E_L2I_AZ_ProbeEy,E_L2I_EL_ProbeEy] =
 linewidth = 2;
 % filename = '/Users/rodrigolebron/Dropbox/Measurements/NCAR/ARRC Chapter/APAR 8x8/Patterns/1 - Calibrated Uniform/NF/ProbeEx/FFL2AzELKxKyPCProbeEx.txt';%Hpol CalUnif67 data//FFL2ElAzNOPCCalUnif67.txt
 %Probe Definition
-filename = 'FFL2AzELKxKyPCProbeEx.txt';
+filename = 'G:\My Drive\ARRC\NF2FF\Matlab\Rodrigo\NF\ProbeEx\FFL2AzELKxKyPCProbeEx.txt';
 dataFF = importFFfromfile(filename,3);
 U_meas=dataFF(:,:,1);
 V_meas=dataFF(:,:,2);
@@ -337,7 +335,7 @@ if doweplot
 end
 %% Import FF probe data Ey
 % filename = '/Users/rodrigolebron/Dropbox/Measurements/NCAR/ARRC Chapter/APAR 8x8/Patterns/1 - Calibrated Uniform/NF/ProbeEy/FFL2AzELKxKyPCProbeEy.txt';%Hpol CalUnif67 data//FFL2ElAzNOPCCalUnif67.txt
-filename = 'FFL2AzELKxKyPCProbeEy.txt';
+filename = 'G:\My Drive\ARRC\NF2FF\Matlab\Rodrigo\NF\ProbeEy\FFL2AzELKxKyPCProbeEy.txt';
 dataFF = importFFfromfile(filename,3);
 U_meas=dataFF(:,:,1);
 V_meas=dataFF(:,:,2);
@@ -584,7 +582,6 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
 %the data to be plotted. It will make a 3d surf plot for you.
     figure();
     surf(gridx,gridy,gridco- max(max(gridco)));
-    colormap jet
     shading interp
     colorbar
     view(2)
@@ -597,7 +594,6 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
 
     figure();
     surf(gridx,gridy,gridcx- max(max(gridco)));
-    colormap jet
     shading interp
     colorbar
     view(2)
@@ -609,7 +605,6 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
     
     figure();
     surf(gridx,gridy,gridpco);
-    colormap jet
     shading interp
     colorbar
     view(2)
@@ -621,7 +616,6 @@ function [] = NFplotter(gridx,gridy,gridco,gridcx)
 
     figure();
     surf(gridx,gridy,gridpcx);
-    colormap jet
     shading interp
     colorbar
     view(2)
